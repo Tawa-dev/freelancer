@@ -34,12 +34,12 @@ A web-based platform that connects freelancers with potential clients by allowin
 
   ## Create a virtual environment (optional but recommended):
 
-    ```bash
+    
     python -m venv venv
     source venv/bin/activate   # On Windows use `venv\Scripts\activate`
 
 ## Install required packages:
-    ```bash
+    
     pip install -r requirements.txt
 
 ## Run the application:
@@ -48,7 +48,7 @@ A web-based platform that connects freelancers with potential clients by allowin
 
 Visit http://127.0.0.1:5000 in your web browser to access the platform.
 
-#Usage
+#  Usage
 
 ## For Job Posters
 
