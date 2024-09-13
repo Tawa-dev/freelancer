@@ -39,8 +39,8 @@ A web-based platform that connects freelancers with potential clients by allowin
     source venv/bin/activate   # On Windows use `venv\Scripts\activate`
 
 ## Install required packages:
-  ```bash
-  pip install -r requirements.txt
+    ```bash
+    pip install -r requirements.txt
 
 ## Run the application:
   ```bash
