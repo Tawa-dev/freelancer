@@ -29,7 +29,7 @@ A web-based platform that connects freelancers with potential clients by allowin
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/Tawa-dev/freelencer.git
+   git clone https://github.com/Tawa-dev/freelancer.git
 
 
   ## Create a virtual environment (optional but recommended):
