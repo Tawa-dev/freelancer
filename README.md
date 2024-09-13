@@ -43,8 +43,8 @@ A web-based platform that connects freelancers with potential clients by allowin
     pip install -r requirements.txt
 
 ## Run the application:
-  ```bash
-  flask run
+    `bash
+    flask run
 
 Visit http://127.0.0.1:5000 in your web browser to access the platform.
 
