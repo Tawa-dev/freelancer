@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <!-- Style -->
+     <link
+     rel="stylesheet"
+     href="{{ url_for('static', filename='css/style.css') }}"
+   />
+   <link
+     rel="stylesheet"
+     href="{{ url_for('static', filename='fonts/icomoon/style.css') }}"
+   />
+    <title>MAVEN - Post a Project</title>
+</head>
+<body>
+    <header class="project-header">
+        <div class="header-content">
+            <div class="header-logo"><a href="{{url_for('main.browse')}}"><h2>MAVEN</h2></a></div>
+            <h1 class="header-title">Tell us what you need done</h1>
+            <p>Post a project which will be accessed by skilled freelancers within minutes. Pay the 
+               freelancers only when you are 100% satisfied with their work.</p>
+        </div>
+    </header>
+    <main class="project-main">
+    <div class="project-content">
+        <form action="" method="post">
+        <span class="err errr hideErr"></span>
+        <input type="text" name="project-name" id="project-name" placeholder="Choose a name for your project" required>
+        <div class="project-description hideContent">
+            <h4>Project description</h4>
+            <span class="err errr1 hideErr"></span>
+            <textarea name="p-description" id="p-description"  rows="10" placeholder="Describe what you need to be done with specificity, outlining the type of project and reqiurements."></textarea>
+        </div>
+        <div class="skills-required hideContent">
+            <h3>What skills are required?</h3>
+            <div class="skills-required-container">
+                <span class="err errr2 hideErr"></span>
+                <input type="text" name="required-skills" id="required-skills" placeholder="e.g 'Python,HTML,Css'">
+            </div>
+        </div>
+        <div class="payment-type hideContent">
+            <h3>How do you want to pay?</h3>
+            <input type="radio" name="p-type" id="" value="perHour" checked><span>Pay by the hour</span>
+            <input type="radio" name="p-type" id="" value="fixed"><span>Pay fixed price</span> 
+        </div>
+        <div class="budget hideContent">
+            <h3>What is your estimated budget?</h3>
+            <div class="budget-content">
+                <select name="currency" id="currency">
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                </select>
+                <select name="budget-range" id="budget-range">
+                    <option value="10-20">Very small project($10 - 20 USD)</option>
+                    <option value="20-50">Small project($20 - 50 USD)</option>
+                    <option value="50-100">Medium project($50 - 100 USD)</option>
+                    <option value="100-1000">Large project($100 - 1000 USD)</option>
+                </select>
+
+            </div>
+        </div>
+        <div class="skills-required deadline hideContent">
+            <h3>Deadline</h3>
+            <span class="err errr3 hideErr"></span>
+            <div class="skills-required-container dline">
+                <input type="date" name="deadline" id="deadlinee" placeholder="5/25/2023">
+            </div>
+        </div>
+        <button type="button" class="project-btn" onclick="showNext(this)">Next</button>
+    </form>
+    </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>     
+</body>
+</html>

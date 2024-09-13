@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}"
+  />
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='fonts/icomoon/style.css') }}"
+  />
+    <title>MAVEN - Freelancers</title>
+</head>
+<body>
+    <div class="overlay">
+        <form action="{{url_for('main.freelancers')}}" method="POST">
+        <div class="bidModal">
+            <div class="h">
+            <h2>Enter Rating</h2>
+            <span class="icon-times" onclick="closeModal()"></span>
+            </div>
+            <div class="payment-type ">
+                <h4 class="rting">Rating from 1 to 5</h4>
+                <span class="err errrat hideErr"></span>
+                <input type="hidden" name="freelancer_id" type="text" class="freelancer_id">
+                <input type="number" name="rating" id="finish" placeholder="e.g '4'" required onblur="validateRating(this)"> 
+            </div>
+            <input type="submit" class="bid bid2" value="Rate" >
+        </div>
+    </form>
+    </div>
+    <header class="profile-header2">
+        <div class="logo2">
+            <h1>MAVEN</h1>
+        </div>
+        <div class="profile-header22">
+        <a href="{{url_for('main.browse')}}" class="browse"><span class="icon-explore"></span>Browse</a>
+        <div class="profile-header-end">
+            <a href="{{url_for('main.post_project')}}"><button class="project-btn">Post a Project</button></a>
+            <div class="profile-pic-container"><img class="profile-pic" src="{{ url_for('static', filename='images/'+lUser.image_file) }}" alt=""></div>
+            <span class="username" onclick="logoutShow()">{{lUser.username}}</span>
+            <div class="logoutC"><a href="{{url_for('users.logout')}}">Sign out</a></div>
+        </div>
+    </div>
+    </header>
+    <section class="browse-header">
+        <div class="browse-heading"><h3>Browse</h3></div>
+        <div class="browse-links">
+        <a href="{{url_for('main.browse')}}">Projects</a>
+        <a href="{{url_for('main.freelancers')}}" class="current">Freelancers</a>
+        </div>
+    </section>
+    <main class="main-content">
+        <div class="filters">
+            <h4>Filters</h4>
+            <div class="project-type">
+                <h5>Hourly Rate</h5>
+                <div class="fixed-price r"><span>min</span><input type="number" name="" id="" placeholder="$  0"> <span class="to">to</span></div>
+                <div class="hourly-rate r2"><span>max</span><input type="number" name="" id="" placeholder="$  50"></div>
+            </div>
+            <div class="project-type">
+                <h5>Skills</h5>
+                <div class="fixed-price"><input type="checkbox" name="" id="" checked ><span>HTML</span></div>
+                <div class="hourly-rate"><input type="checkbox" name="" id="" checked><span>Javascript</span></div>
+                <div class="fixed-price"><input type="checkbox" name="" id="" checked><span>Python</span></div>
+                <div class="hourly-rate"><input type="checkbox" name="" id="" checked><span>Flask</span></div>
+            </div>
+        </div>
+        <div class="jobs freelancers">
+            {% for user in users.items %}
+            <div class="bidy freelancer">
+                <div class="firstHalf firstHalf2">
+                    <div class="fhInner fhInner2">
+                        <div class="imgC imgC2"><img class="bImg" src="{{ url_for('static', filename='images/'+user.image_file) }}" alt=""></div>
+                        <div class="userInfo">
+                            <h3 class="usern">{{user.fullname}} <span class="uname">@{{user.username}}</span></h3>
+                            <div class="stars">
+                                {%if user.ratings == []%}
+                                <span style="color: lightcoral;">No Rating</span>
+                                {%else%}
+                                {%set rList = []%}
+                                {%for r in user.ratings%}
+                                  {%if rList.append(r.rating|int)%}{%endif%}
+                                {%endfor%}
+
+                                 {%set avg = (rList | sum / rList | count) %}
+                                 {% for av in range(avg|round()|int) %}
+                                 <span class="icon-star"></span>
+                                 {%endfor%}
+                                 {{avg}}
+                                
+                                {%endif%}
+                            </div>
+                            <!-- get only the country from the address -->
+                            {% set addrList = user.home_address.split(',')|reverse|list%}
+                            <a href="mailto:{{user.email}}" class="emC"><span class="em">{{user.email}}</span></a><span> {{addrList[0]}}</span>
+                            <h4 class="prof">{{user.profession}}</h4>
+                            
+                            <div class="descr descr2"><p>{{user.description}}</p></div>
+                            <div class="userSkillsC userSkillsC2">
+                                {%for sk in user.skills%}
+                                <span>{{sk.skill_name}} |</span>
+                                {%endfor%}
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="secondHalf secondHalf2">
+                    <div class="bidInfo">
+                        <h3>${{user.rate}} USD</h3>
+                            <span>per hour</span>
+                    </div>
+                    <div ><button type="button" class="rate" onclick="showModal2(this)" id="{{user.id}}">Rate</button></div>
+                </div>
+            </div> 
+           {%endfor%} 
+           <!-- pagination -->
+           <div style="text-align: right !important">
+            {% for page_num in
+            users.iter_pages(left_edge=1,right_edge=1,left_current=1,right_current=2)
+            %} {% if page_num %} {% if users.page == page_num %}
+            <a
+              class="btn2 mb-4"
+              href="{{ url_for('main.freelancers',page=page_num) }}"
+              >{{ page_num }}</a
+            >
+            {% else %}
+            <a
+              class="btn2 btn-outline-info mb-4"
+              href="{{ url_for('main.freelancers',page=page_num) }}"
+              >{{ page_num }}</a
+            >
+            {% endif %}{% else %} ... {% endif %} {% endfor %}
+          </div> 
+        </div>
+    </main>
+  
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>    
+</body>
+</html>

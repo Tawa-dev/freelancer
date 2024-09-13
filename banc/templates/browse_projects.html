@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}"
+  />
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='fonts/icomoon/style.css') }}"
+  />
+    <title>MAVEN - Browse Projects</title>
+</head>
+<body>
+    <header class="profile-header2">
+        <div class="logo2">
+            <h1>MAVEN</h1>
+        </div>
+        <div class="profile-header22">
+        <a href="{{url_for('main.browse')}}" class="browse"><span class="icon-explore"></span>Browse</a>
+        <div class="profile-header-end">
+            <a href="{{url_for('main.post_project')}}"><button class="project-btn">Post a Project</button></a>
+            <div class="profile-pic-container"><img class="profile-pic" src="{{ url_for('static', filename='images/'+lUser.image_file) }}" alt=""></div>
+            <span class="username" onclick="logoutShow()">{{lUser.username}}</span>
+            <div class="logoutC"><a href="{{url_for('users.logout')}}">Sign out</a></div>
+        </div>
+    </div>
+    </header>
+    <section class="browse-header">
+        <div class="browse-heading"><h3>Browse</h3></div>
+        <div class="browse-links">
+            <a href="{{url_for('main.browse')}}" class="current">Projects</a>
+            <a href="{{url_for('main.freelancers')}}">Freelancers</a>
+        </div>
+    </section>
+    <main class="main-content">
+        <div class="filters">
+            <h4>Filters</h4>
+            <div class="project-type">
+                <h5>Project Type</h5>
+                <div class="fixed-price"><input type="checkbox" name="" id=""><span>Fixed Price</span></div>
+                <div class="hourly-rate"><input type="checkbox" name="" id=""><span>Hourly Rate</span></div>
+            </div>
+            <div class="project-type">
+                <h5>Skills</h5>
+                <div class="fixed-price"><input type="checkbox" name="" id="" checked ><span>HTML</span></div>
+                <div class="hourly-rate"><input type="checkbox" name="" id="" checked><span>Javascript</span></div>
+                <div class="fixed-price"><input type="checkbox" name="" id="" checked><span>Python</span></div>
+                <div class="hourly-rate"><input type="checkbox" name="" id="" checked><span>Flask</span></div>
+            </div>
+        </div>
+        <div class="jobs">
+            {% for project in p %}
+            <a class="jobLink" href="{{url_for('main.project_details',projectId=project.id)}}">
+            <div class="job" onclick="jobDetails(this)">
+                <div class="job-header">
+                    <h2 class="job-title">{{project.project_name}}</h2>
+                    <!-- calculate avg price, first make string into list to seperate the values from the range  -->
+                    {% set avgList = project.budget.split('-') %}
+                    <div class="job-price">
+                        {% if project.bids == [] %}
+                        <span class="sealed">SEALED</span>
+                        {%else%}
+                        <!-- calculate avg bid -->
+                        <h4>$
+                            {%set t = []%}
+                            {%for b in project.bids%}
+                             {%if t.append(b.bidd|int)%}{%endif%}
+                             {%endfor%}
+                             {{(t | sum / t | count)|round()|int}}
+
+                            {%if project.payment_type == 'fixed'%}
+                            {{project.currencyy}}
+                            {%endif%}
+                            {%if project.payment_type == 'perHour'%}
+                            per hour
+                            {%endif%}
+                        </h4>
+                        <small>average bid</small>
+                        {%endif%}
+                    </div>
+                </div>
+                <div class="job-header2">
+                    <span>Budget ${{avgList[0]}} - {{avgList[1]}}
+                        {%if project.payment_type == 'fixed'%}
+                        {{project.currencyy}}
+                        {%endif%}
+                        {%if project.payment_type == 'perHour'%}
+                        per hour
+                        {%endif%}
+                    </span>
+                </div>
+                <div class="job-description">
+                    <p>{{project.project_description}}</p>
+                </div>
+                <div class="job-footer">
+                    <p class="required-skills">{{project.required_skills|replace(',','  .  ')}}</p>
+                    <span> 
+                        {%if(tday-project.date_posted).days%}
+                            {{(tday-project.date_posted).days}} days
+                        {%endif%}
+                        {%if ((tday-project.date_posted).seconds%(24*3600))//3600%}
+                          {{((tday-project.date_posted).seconds%(24*3600))//3600}} h
+                        {%endif%}  
+                        {%if ((tday-project.date_posted).seconds%(3600))//60%}
+                          {{((tday-project.date_posted).seconds%(3600))//60}} m
+                        {%endif%}
+                        {%if ((tday-project.date_posted).seconds%(60)) %}
+                          {{((tday-project.date_posted).seconds%(60))}} sec
+                        {%else%}1 sec
+                        {%endif%}
+                          ago
+                    </span>
+                </div>
+            </div>
+        </a>
+            {%endfor%}
+            
+            <!-- pagination -->
+             <div style="text-align: right !important">
+                {% for page_num in
+                projects.iter_pages(left_edge=1,right_edge=1,left_current=1,right_current=2)
+                %} {% if page_num %} {% if projects.page == page_num %}
+                <a
+                  class="btn2 btn-info mb-4"
+                  href="{{ url_for('main.browse',page=page_num) }}"
+                  >{{ page_num }}</a
+                >
+                {% else %}
+                <a
+                  class="btn2 btn-outline-info mb-4"
+                  href="{{ url_for('main.browse',page=page_num) }}"
+                  >{{ page_num }}</a
+                >
+                {% endif %}{% else %} ... {% endif %} {% endfor %}
+              </div>
+        </div>
+    </main>
+  
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>    
+</body>
+</html>

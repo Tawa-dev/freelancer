@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}"
+  />
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='fonts/icomoon/style.css') }}"
+  />
+    <title>MAVEN - Project Details</title>
+</head>
+<body>
+    <div class="overlay">
+        <form action="{{url_for('main.project_details',projectId=project.id)}}" method="POST">
+        <div class="bidModal">
+            <div class="h">
+            <h2>Enter Your Bid</h2>
+            <span class="icon-times" onclick="closeModal()"></span>
+            </div>
+            <div class="bidValue">
+                <select name="currency" id="currency">
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+               </select>
+               <input type="text" name="bidVal" id="bidVal" placeholder="e.g '500'" required>
+            </div>
+            <div class="payment-type ">
+                <h4>How many days to finish project?</h4>
+                <input type="number" name="finish" id="finish" placeholder="e.g '2'" required> 
+            </div>
+            <div class="payment-type">
+                <h4>How do you get payed?</h4>
+                <input type="radio" name="p-type" id="" value="perHour" checked><span>Pay by the hour</span>
+                <input type="radio" name="p-type" id="" value="fixed"><span>Pay fixed price</span> 
+            </div>
+            <input type="submit" class="bid bid2" value="Bid" onclick="confirmBid()">
+        </div>
+    </form>
+    </div>
+    <header class="profile-header2">
+        <div class="logo2">
+            <h1>MAVEN</h1>
+        </div>
+        <div class="profile-header22">
+        <a href="{{url_for('main.browse')}}" class="browse"><span class="icon-explore"></span>Browse</a>
+        <div class="profile-header-end">
+            <a href="{{url_for('main.post_project')}}"><button class="project-btn">Post a Project</button></a>
+            <div class="profile-pic-container"><img class="profile-pic" src="{{ url_for('static', filename='images/'+lUser.image_file) }}" alt=""></div>
+            <span class="username" onclick="logoutShow()">{{lUser.username}}</span>
+            <div class="logoutC"><a href="{{url_for('users.logout')}}">Sign out</a></div>
+        </div>
+        </div>
+    </header>
+    <section class="browse-header bh">
+        <div class="browse-heading projectHeader">
+            <div><h3>{{project.project_name}}</h3>
+                {%if project.deadline>todayD%}
+                <span class="ps">Open</span>
+                {%else%}
+                <span class="ps ps2">Closed</span>
+                {%endif%}
+
+            </div>
+            {% set avgList = project.budget.split('-') %}
+            <div class="bd"><div class="b"><span class="b-info1">Bids</span><span class="b-info2">{{numBids}}</span></div>
+                <div class="b"><span class="b-info1">Average bid</span><span class="b-info2">${{avgBid}}
+                    {%if project.payment_type == 'fixed'%}
+                    {{project.currencyy}}
+                    {%endif%}
+                    {%if project.payment_type == 'perHour'%}
+                    per hour
+                    {%endif%}
+                    </span></div>
+            </div>
+        </div>
+        <div class="browse-links">
+            <a href="{{url_for('main.project_details',projectId=project.id)}}" class="current">Details</a>
+            <a href="{{url_for('main.bids',projectId=project.id)}}">Proposals</a>
+        </div>
+    </section>
+    <main class="jdContainer">
+        <div class="details">
+        <div class="details-head">  
+            <h3>Project Details</h3>
+            <div class="dh"><span class="dh1">${{avgList[0]}} - {{avgList[1]}}
+                {%if project.payment_type == 'fixed'%}
+                        {{project.currencyy}}
+                        {%endif%}
+                        {%if project.payment_type == 'perHour'%}
+                        per hour
+                        {%endif%}
+            </span>
+            {%if project.deadline>todayD%}
+            <span class="dh2">BIDDING ENDS IN
+                {%if(project.deadline-todayD).days%}
+                            {{(project.deadline-todayD).days}} DAYS
+                        {%endif%}
+                        {%if ((project.deadline-todayD).seconds%(24*3600))//3600%}
+                          {{((project.deadline-todayD).seconds%(24*3600))//3600}} H
+                        {%endif%}  
+                        {%if ((project.deadline-todayD).seconds%(3600))//60%}
+                          {{((project.deadline-todayD).seconds%(3600))//60}} M
+                        {%endif%}
+                        {%if ((project.deadline-todayD).seconds%(60)) %}
+                          {{((project.deadline-todayD).seconds%(60))}} SEC
+                        {%else%}1 sec
+                        {%endif%}
+            </span>
+            {%else%}
+            <span class="dh2">BIDDING ENDED</span>
+            {%endif%}
+                 
+            </div>
+        </div>
+        <div class="details-body">
+            <p>{{project.project_description}}</p>
+        </div>
+        <div class="details-footer">
+            <h4>Skills Required</h4>
+            <div class="df-body">
+            {% set skillsList = project.required_skills.split(',') %}   
+            <div class="srContainer">
+                {% for skill in skillsList %}
+                <span class="sr">{{skill}}</span>
+                {%endfor%}
+            </div>
+            {%if project.deadline>todayD%}
+            <button class="bid" type="button" onclick="showModal()">Bid</button>
+                
+                
+                {%endif%}
+            
+            </div>
+        </div>
+        </div>
+        <div class="client">
+         <h3>About the Client</h3>
+         <div class="client-body">
+            <span>{{client.fullname}}</span>
+            <span>{{client.email}}</span>
+            {% set addrList = client.home_address.split(',')|reverse|list%}
+            <span>{{addrList[1]}}</span>
+            <span>{{addrList[0]}}</span>
+            <span>Member since {{(client.date_joined)|string}}</span>
+         </div>
+        </div>
+        
+    </main>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>    
+</body>
+</html>

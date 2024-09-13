@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}"
+  />
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='fonts/icomoon/style.css') }}"
+  />
+    <title>MAVEN - Bids</title>
+</head>
+<body>
+    <header class="profile-header2">
+        <div class="logo2">
+            <h1>MAVEN</h1>
+        </div>
+        <div class="profile-header22">
+        <a href="{{url_for('main.browse')}}" class="browse"><span class="icon-explore"></span>Browse</a>
+        <div class="profile-header-end">
+            <a href="{{url_for('main.post_project')}}"><button class="project-btn">Post a Project</button></a>
+            <div class="profile-pic-container"><img class="profile-pic" src="{{ url_for('static', filename='images/'+lUser.image_file) }}" alt=""></div>
+            <span class="username" onclick="logoutShow()">{{lUser.username}}</span>
+            <div class="logoutC"><a href="{{url_for('users.logout')}}">Sign out</a></div>
+        </div>
+        </div>
+    </header>
+    <section class="browse-header bh">
+        <div class="browse-heading projectHeader">
+            <div><h3>{{project.project_name}}</h3>
+                {%if project.deadline>todayD%}
+                <span class="ps">Open</span>
+                {%else%}
+                <span class="ps ps2">Closed</span>
+                {%endif%}
+
+            </div>
+            {% set avgList = project.budget.split('-') %}
+            <div class="bd"><div class="b"><span class="b-info1">Bids</span><span class="b-info2">{{numBids}}</span></div>
+                <div class="b"><span class="b-info1">Average bid</span><span class="b-info2">${{avgBid}}
+                    {%if project.payment_type == 'fixed'%}
+                    {{project.currencyy}}
+                    {%endif%}
+                    {%if project.payment_type == 'perHour'%}
+                    per hour
+                    {%endif%}
+                    </span></div>
+            </div>
+        </div>
+        <div class="browse-links">
+            <a href="{{url_for('main.project_details',projectId=project.id)}}" >Details</a>
+            <a href="{{url_for('main.bids',projectId=project.id)}}" class="current">Proposals</a>
+        </div>
+    </section>
+    <main class="bidsContainer">
+        {% for u,b in data %}
+        <div class="bidy">
+            <div class="firstHalf">
+                <div class="fhInner">
+                    <div class="imgC"><img class="bImg" src="{{ url_for('static', filename='images/'+u.image_file) }}" alt=""></div>
+                    <div class="userInfo">
+                        <h3>{{u.fullname}} <span class="uname">@{{u.username}}</span></h3>
+                        <div class="stars">
+                            {%if u.ratings == []%}
+                                <span style="color: lightcoral;">No Rating</span>
+                                {%else%}
+                                {%set rList = []%}
+                                {%for r in u.ratings%}
+                                  {%if rList.append(r.rating|int)%}{%endif%}
+                                {%endfor%}
+
+                                 {%set avg = (rList | sum / rList | count) %}
+                                 {% for av in range(avg|round()|int) %}
+                                 <span class="icon-star"></span>
+                                 {%endfor%}
+                                 {{avg}}
+                                
+                                {%endif%}
+                        </div>
+                        <!-- get only the country from the address -->
+                        {% set addrList = u.home_address.split(',')|reverse|list%}
+                        <a href="mailto:{{u.email}}" class="emC"><span class="em">{{u.email}}</span></a><span> {{addrList[0]}}</span>
+                        <div class="userSkillsC">
+                            {%set skList=[]%}
+                            {%for sk in u.skills%}
+                                {%if skList.append(sk.skill_name)%}{%endif%}
+                            <span>{{sk.skill_name}} |</span>
+                            {%endfor%}
+                        </div>
+                    </div>
+                </div>
+                <div class="descr"><p>{{u.description}}</p></div>
+            </div>
+            <div class="secondHalf">
+                <div class="bidInfo">
+                    <h3>${{b.bidd}} USD</h3>
+                        <span>in {{b.duration}} days</span>
+                </div>
+                <!-- made a two list one with project required skills, one with user skills, then made another list with common skills in two 
+                previously mentioned lists, then calculated percentage using list with common skill divide by the required project skills -->
+                {%set uSkills = []%}
+                {%for s in u.skills%}
+                    {%if uSkills.append(s.skill_name)%}{%endif%}
+                {%endfor%}
+
+                {% set pSkills = project.required_skills.split(',')%}  
+                
+                {%set c = [] %}
+                {%for ps in pSkills %}
+                   {% if ps in uSkills %}
+                   {%if c.append(ps)%}{%endif%}
+                   {%endif%}
+                {%endfor%}        
+
+                <div ><span class="match">{{((c|count/pSkills|count)*100)|round|int}}%</span><span class="m"> match</span></div>
+            </div>
+        </div>                   
+        {%endfor%}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>    
+</body>
+</html>
