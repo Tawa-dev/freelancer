@@ -23,21 +23,20 @@ A web-based platform that connects freelancers with potential clients by allowin
 - **Frontend:** HTML, CSS, JavaScript
 - **Database:** SQLite
 - **Version Control:** Git
-- **Deployment:** [Your Deployment Method, e.g., Heroku, AWS, etc.
   
 ## Installation
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/username/your-project-name.git
+   git clone https://github.com/Tawa-dev/freelencer.git
 
 
-## Create a virtual environment (optional but recommended):
+  ## Create a virtual environment (optional but recommended):
 
-  ```bash
-  python -m venv venv
-  source venv/bin/activate   # On Windows use `venv\Scripts\activate`
+    ```bash
+    python -m venv venv
+    source venv/bin/activate   # On Windows use `venv\Scripts\activate`
 
 ## Install required packages:
   ```bash
